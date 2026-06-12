@@ -1,150 +1,120 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.mycompany.chatapp;
-
-import java.util.Scanner;
 
 /**
  *
  * @author Student
  */
-public class Chatapp {
+import java.util.Scanner; 
 
- 
-static String storedUsername = ""; 
-static String storedPassword = ""; 
+public class ChatApp {
+    static String storedUsername = "";  
+
+static String storedPassword = "";  
+
 static String storedCellNumber = ""; 
-//username method 
-static boolean checkUserName(String username){ 
-    if (username.length()>5){ 
-        System.out.println("Username must not exceed 5 characters."); 
-        return false; 
-    } 
-    if (!username.contains("_")){ 
-        System.out.println("Username must contain an underscore(_)."); 
-    return false; 
-    } 
-    return true; 
-} 
-//passwordComplexity method  
-static boolean checkPasswordComplexity(String password){ 
-    if(password.length()<8){ 
-        System.out.println("Password must be at least 8 characters long."); 
-        return false; 
-    } 
-    if(!password.matches(".*[A-Z].*")){ 
-        System.out.println("Password must contain a capital letter."); 
-        return false; 
-    } 
-    if(!password.matches(".*\\d.*")){ 
-        System.out.println("Passsword must have at least one number."); 
-        return false; 
-    } 
-    if(!password.matches(".*[@#$%!?&].*")){ 
-        System.out.println("Password must have a special character."); 
-        return false; 
-    } 
-    return true; 
-} 
-//checkCellphoneNUmber method 
-static boolean checkCellPhoneNumber(String cellNumber){ 
-    if(cellNumber.matches("^\\+27[0-9]{9}$")){ 
-        return true; 
-    } 
-    System.out.println("Cell number must be in the format: +27XXXXXXXXX"); 
-    return false; 
-} 
-//registering the user 
-static String registerUser(String username, String password, String cellNumber){ 
-    if (!checkUserName(username)){ 
-        return "Registration failed: username is incorrect."; 
-    } 
-    if(!checkPasswordComplexity(password)){ 
-        return "Registration failed: incorrectly formatted password."; 
-    } 
-    if(!checkCellPhoneNumber(cellNumber)){ 
-        return "Registration failed: cell number is incorrectly formatted."; 
-    } 
-     
-    storedPassword = password; 
-    storedUsername = username; 
-    storedCellNumber = cellNumber; 
-     
-    return "Registration successful! Welcome to ChatApp, " + username + "."; 
+
+public static boolean checkUserName(String username) { 
+   if (username == null) return false; 
+   boolean containsUnderscore = username.contains("_"); 
+   boolean lengthIsValid = username.length() <= 5;  
+   return containsUnderscore && lengthIsValid; 
 } 
  
+public static boolean checkPasswordComplexity(String password) { 
+   if (password == null) return false; 
+   return password.length() >= 8 &&  
+          password.matches(".*[A-Z].*") &&  
+          password.matches(".*\\d.*") &&  
+          password.matches(".*[@#$%!?&].*"); 
+} 
+ 
+public static boolean checkCellPhoneNumber(String cellNumber) { 
+   if (cellNumber == null) return false; 
+   return cellNumber.matches("^\\+27\\d{9}$"); 
+} 
+ 
+public static String registerUser(String username, String password, String cellNumber) { 
+   if (!checkUserName(username)) { 
+       return "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters long."; 
+   } 
+   if (!checkPasswordComplexity(password)) { 
+       return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character."; 
+   } 
+   if (!checkCellPhoneNumber(cellNumber)) { 
+       return "Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again."; 
+   } 
+ 
+   storedUsername = username; 
+   storedPassword = password; 
+   storedCellNumber = cellNumber; 
+ 
+   return "Welcome " + username + " it is great to see you."; 
+} 
+ 
+public static boolean loginUser(String username, String password) { 
+   return username.equals(storedUsername) && password.equals(storedPassword); 
+} 
  
 public static void main(String[] args) { 
+   Scanner input = new Scanner(System.in); 
  
-    Scanner input = new Scanner(System.in); 
+   System.out.println("-----Register----"); 
+   String username; 
+   while (true) { 
+       System.out.println("Enter username"); 
+       username = input.nextLine(); 
+       if (checkUserName(username)) { 
+           System.out.println("Username successfully captured"); 
+           break; 
+       } 
+   } 
+ 
+   String password; 
+   while (true) { 
+       System.out.print("Enter password: "); 
+       password = input.nextLine(); 
+       if (checkPasswordComplexity(password)) { 
+           break; 
+       } 
+   } 
+ 
+   String cellNumber; 
+   while (true) { 
+       System.out.print("Enter cell number: "); 
+       cellNumber = input.nextLine(); 
+       if (checkCellPhoneNumber(cellNumber)) { 
+           break; 
+       } 
+   } 
+ 
+   System.out.println(registerUser(username, password, cellNumber)); 
+ 
+   System.out.println("\n-----Login-----"); 
+   System.out.print("Enter username: "); 
+   String loginUser = input.nextLine(); 
+ 
+   System.out.print("Enter password: "); 
+   String loginPass = input.nextLine(); 
+ 
+   if (!loginUser(loginUser, loginPass)) { 
+       System.out.println("Login failed! Access denied."); 
+       input.close(); 
+       return; 
+   } 
+ 
+   // Functionality 2: Success welcome message 
+   System.out.println("Login successful!"); 
+   System.out.println("\nWelcome to QuickChat."); 
+ 
+   // HAND OVER CONTROL TO THE EXTERNAL MESSAGE FILE 
+   Message.startMessageSession(input); 
+ 
+   input.close(); 
+} 
+ 
     
-    String username; 
-    String cellNumber; 
-    String password; 
-    
-    
-    // Registration 
-    System.out.println("-----Register----"); 
- 
-    System.out.print("Enter username: "); 
-     username = input.nextLine(); 
- 
-   
-     while(true){ 
-         System.out.println("Enter password: "); 
-         password = input.nextLine(); 
-          
-         String pattern ="^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}$"; 
-          
-         if (password.length()<8){ 
-             System.out.println("Password must be at least 8 characters long"); 
-         } 
-         else if(!password.matches(".*[A-Z].*")){ 
-             System.out.println("Password must contain a capital letter"); 
-         } 
-         else if(!password.matches(".*\\d.*")){ 
-             System.out.println("Password must have at least one number"); 
-         } 
-         else if(!password.matches(".*[@$!%*?&].*")){ 
-             System.out.println("Password must have a special character"); 
-         } 
-         else{ 
-             System.out.println("Password is correctly formatted"); 
-             break; 
-         } 
-     } 
-      
-    while(true){ 
-        System.out.println("Enter cell number: "); 
-        cellNumber = input.nextLine(); 
-        
-        if (cellNumber.matches("^(?:\\+27|0)[6-8][0-9]{8}$")) { 
-            System.out.println("Cell number correctly formatted!"); 
-            break; 
-        } else{ 
-            System.out.println("Cell number incorrectly formatted!"); 
-        } 
-    } 
- 
-    System.out.println("Registration successful!\n"); 
- 
-    // Login 
-    System.out.println("Login"); 
- 
-    System.out.println("Enter username: "); 
-    String loginUser = input.nextLine(); 
- 
-    System.out.println("Enter password: "); 
-    String loginPass = input.nextLine(); 
- 
-    if (loginUser.equals(username) && loginPass.equals(password)) { 
-        System.out.println("Login successful!"); 
-        System.out.println("Registration Complete! Welcome to ChatApp " + username);
-    }
-    else { 
-        System.out.println("Login failed!"); 
-    } 
-  }
 }
